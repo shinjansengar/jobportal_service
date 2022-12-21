@@ -1,0 +1,1 @@
+module.exports = { url: "mongodb+srv://jobportal-test:outscal21@jobportal-cluster.kb3pges.mongodb.net/?retryWrites=true&w=majority" }
