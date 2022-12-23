@@ -26,8 +26,12 @@ router.post("/jobs", async (req, res) => {
 
 //Fetch all Jobs
 router.get("/jobs", async (req, res) => {
-    const jobs = await Job.find()
-    res.send(jobs);
+    try{
+        const jobs = await Job.find()
+        res.send(jobs);
+    }catch(e){
+        res.send(e);
+    }
 })
 
 //Fetch job by id
