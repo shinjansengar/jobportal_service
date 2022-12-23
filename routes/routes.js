@@ -55,14 +55,20 @@ router.delete("/jobs/:id", async (req, res) => {
 //Create a user
 router.post("/user", async (req, res) => {
     try {
-        const user = new User({
-            username: req.body.username,
-            user_role: req.body.user_role
-        })
-
-        await user.save();
-        res.status(201);
-        res.send(user);
+        let existingUser = await User.findOne({ username: req.body.username})
+        if(existingUser){
+            res.status(200);
+            res.send(existingUser);
+        }else{
+            const user = new User({
+                username: req.body.username,
+                user_role: req.body.user_role
+            })
+    
+            await user.save();
+            res.status(201);
+            res.send(user);
+        }
     } catch (err) {
         res.status(400);
         res.send({ "error": err })
@@ -111,19 +117,19 @@ router.patch("/user/:id", async (req, res) => {
         const application = user.job_application.find(item => item.job_id === req.body.job_id);
         if (application !== undefined) {
             if (req.body.status === "Completed") {
-                const job = await Job.findOne({_id: req.body.job_id}); // Adding User info in job applicants list
+                const job = await Job.findOne({ _id: req.body.job_id }); // Adding User info in job applicants list
                 job.applicants.push({
                     user_id: user._id,
                     username: user.username
                 })
-                job.save();  
+                job.save();
                 application.status = req.body.status;
                 user.save();
                 res.status(200);
                 res.send({ "message": "Job application submitted." });
-            }else{
+            } else {
                 res.status(400);
-                res.send({"message": "Incorrect Job status."});
+                res.send({ "message": "Incorrect Job status." });
             }
         } else {
             res.status(400);
